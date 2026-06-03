@@ -1,8 +1,15 @@
-// raylib-zig (c) Nikolas Wipper 2024
-
 const rl = @import("raylib.zig");
 const rlgl = @import("rlgl.zig");
 
+pub extern "c" fn glMultiDrawArraysIndirect(mode: c_uint, indirect: ?*const anyopaque, drawcount: c_int, stride: c_int) void;
+pub extern "c" fn glMemoryBarrier(barriers: c_uint) void;
+pub extern "c" fn glBufferStorage(target: c_uint, size: isize, data: ?*const anyopaque, flags: c_uint) void;
+pub extern "c" fn glMapBufferRange(target: c_uint, offset: isize, length: isize, access: c_uint) ?*anyopaque;
+pub extern "c" fn glUnmapBuffer(target: c_uint) u8;
+pub extern "c" fn glBindBuffer(target: c_int, buffer: c_uint) void;
+pub extern "c" fn glFenceSync(condition: c_uint, flags: c_uint) ?*anyopaque;
+pub extern "c" fn glClientWaitSync(sync: ?*anyopaque, flags: c_uint, timeout: u64) c_uint;
+pub extern "c" fn glDeleteSync(sync: ?*anyopaque) void;
 pub extern "c" fn rlMatrixMode(mode: c_int) void;
 pub extern "c" fn rlPushMatrix() void;
 pub extern "c" fn rlPopMatrix() void;

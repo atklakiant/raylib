@@ -1,5 +1,3 @@
-// raylib-zig (c) Nikolas Wipper 2024
-
 const rl = @import("raylib.zig");
 const std = @import("std");
 
@@ -188,6 +186,37 @@ pub const rlCullMode = enum(c_uint) {
     rl_cull_face_back = 1,
 };
 
+pub const draw_indirect_buffer: i32 = 0x8F3F;
+pub const shader_storage_barrier_bit: i32 = 0x00002000;
+pub const command_barrier_bit: i32 = 0x00000040;
+pub const vertex_attrib_array_barrier_bit: i32 = 0x00000001;
+pub const map_write_bit: i32 = 0x0002;
+pub const map_read_bit: i32 = 0x0001;
+pub const map_persistent_bit: i32 = 0x0040;
+pub const map_coherent_bit: i32 = 0x0080;
+pub const dynamic_storage_bit: i32 = 0x0100;
+pub const sync_gpu_commands_complete: i32 = 0x9117;
+pub const timeout_expired: i32 = 0x911B;
+pub const already_signaled: i32 = 0x911A;
+pub const condition_satisfied: i32 = 0x911C;
+pub const triangles: i32 = 0x0004;
+pub const array_buffer: i32 = 0x8892;
+pub const texture_2d_array: i32 = 0x8C1A;
+pub const rgba8: i32 = 0x8058;
+pub const rgba: i32 = 0x1908;
+pub const unsigned_byte: i32 = 0x1401;
+pub const texture_min_filter: i32 = 0x2801;
+pub const texture_mag_filter: i32 = 0x2800;
+pub const linear_mipmap_linear: i32 = 0x2703;
+pub const linear: i32 = 0x2601;
+pub const rl_draw_indirect_buffer = @as(i32, 0x8F3F);
+pub const rl_shader_storage_barrier_bit = @as(i32, 0x00002000);
+pub const rl_command_barrier_bit = @as(i32, 0x00000040);
+pub const rl_map_write_bit = @as(i32, 0x0002);
+pub const rl_map_persistent_bit = @as(i32, 0x0040);
+pub const rl_map_coherent_bit = @as(i32, 0x0080);
+pub const rl_sync_gpu_commands_complete = @as(i32, 0x9117);
+pub const rl_timeout_expired = @as(i32, 0x911B);
 pub const rl_default_batch_buffer_elements = @as(i32, 8192);
 pub const rl_default_batch_buffers = @as(i32, 1);
 pub const rl_default_batch_drawcalls = @as(i32, 256);
@@ -272,6 +301,56 @@ pub const rl_default_shader_attrib_location_indices = @as(i32, 6);
 pub const rl_default_shader_attrib_location_boneindices = @as(i32, 7);
 pub const rl_default_shader_attrib_location_boneweights = @as(i32, 8);
 pub const rl_default_shader_attrib_location_instancetransform = @as(i32, 9);
+
+/// Issue a multi-draw indirect call from the currently bound draw_indirect_buffer
+pub fn rlMultiDrawArraysIndirect(mode: i32, drawcount: i32) void {
+    cdef.glMultiDrawArraysIndirect(@as(c_int, mode), null, @as(c_int, drawcount), 0);
+}
+
+/// Insert a memory barrier for the given barrier bits
+pub fn rlMemoryBarrier(barriers: i32) void {
+    cdef.glMemoryBarrier(@as(c_uint, @bitCast(barriers)));
+}
+
+/// Allocate immutable GPU buffer storage (required for persistent mapping)
+pub fn rlBufferStorage(target: i32, size: isize, data: ?*const anyopaque, flags: i32) void {
+    cdef.glBufferStorage(@as(c_int, target), size, data, @as(c_uint, @bitCast(flags)));
+}
+
+/// Map a range of a buffer object's data store into the client's address space
+pub fn rlMapBufferRange(target: i32, offset: isize, length: isize, access: i32) ?*anyopaque {
+    return cdef.glMapBufferRange(@as(c_int, target), offset, length, @as(c_uint, @bitCast(access)));
+}
+
+/// Unmap a previously mapped buffer. Returns false if the mapping was invalidated
+pub fn rlUnmapBuffer(target: i32) bool {
+    return cdef.glUnmapBuffer(@as(c_int, target)) != 0;
+}
+
+/// Bind a buffer object to a buffer target
+pub fn rlBindBuffer(target: i32, buffer: u32) void {
+    cdef.glBindBuffer(@as(c_int, target), @as(c_uint, buffer));
+}
+
+/// Create a fence sync object that signals when all prior GPU commands complete
+pub fn rlFenceSync() ?*anyopaque {
+    return cdef.glFenceSync(@as(c_uint, @bitCast(sync_gpu_commands_complete)), 0);
+}
+
+/// Block until the sync object is signaled or timeout (ns) expires. Returns the result status
+pub fn rlClientWaitSync(sync: ?*anyopaque, timeout_ns: u64) i32 {
+    return @as(i32, @bitCast(cdef.glClientWaitSync(sync, 0, timeout_ns)));
+}
+
+/// Delete a sync object
+pub fn rlDeleteSync(sync: ?*anyopaque) void {
+    cdef.glDeleteSync(sync);
+}
+
+/// Set a texture parameter integer value
+pub fn rlTexParameteri(target: i32, pname: i32, param: i32) void {
+    cdef.rlTextureParameters(@as(c_int, target), @as(c_int, pname), @as(c_int, param));
+}
 
 /// Choose the current matrix to be transformed
 pub fn rlMatrixMode(mode: i32) void {

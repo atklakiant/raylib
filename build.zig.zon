@@ -1,5 +1,5 @@
 .{
-    .name = .raylib_zig,
+    .name = .raylib,
 
     .version = "6.0.0",
     .minimum_zig_version = "0.16.0",

@@ -1,5 +1,3 @@
-// raylib-zig (c) Nikolas Wipper 2023
-
 const rl = @This();
 const std = @import("std");
 
