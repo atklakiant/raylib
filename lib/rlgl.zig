@@ -309,6 +309,8 @@ const PfnBufferData = *const fn (c_int, isize, ?*const anyopaque, c_int) callcon
 const PfnBufferSubData = *const fn (c_int, isize, isize, ?*const anyopaque) callconv(.c) void;
 const PfnMultiDrawArraysIndirect = *const fn (c_int, ?*const anyopaque, c_int, c_int) callconv(.c) void;
 
+pub extern "gdi32" fn wglGetProcAddress(name: [*:0]const u8) callconv(.c) ?*anyopaque;
+
 fn loadProc(comptime name: [*:0]const u8) *anyopaque {
     return wglGetProcAddress(name) orelse @panic("failed to load GL function");
 }
@@ -321,24 +323,32 @@ fn getProc(comptime Pfn: type, comptime name: [*:0]const u8) Pfn {
     return Holder.func.?;
 }
 
-pub extern "gdi32" fn wglGetProcAddress(name: [*:0]const u8) callconv(.c) ?*anyopaque;
-
+/// Generate buffer object names
 pub fn rlGenBuffers(count: i32, buffers: [*]c_uint) void {
     getProc(PfnGenBuffers, "glGenBuffers")(@intCast(count), buffers);
 }
 
+/// Delete named buffer objects
 pub fn rlDeleteBuffers(count: i32, buffers: [*]const c_uint) void {
     getProc(PfnDeleteBuffers, "glDeleteBuffers")(@intCast(count), buffers);
 }
 
+/// Bind a buffer object to a buffer target
+pub fn rlBindBuffer(target: i32, buffer: u32) void {
+    getProc(PfnBindBuffer, "glBindBuffer")(@intCast(target), @intCast(buffer));
+}
+
+/// Create and initialize a buffer object's data store
 pub fn rlBufferData(target: i32, size: isize, data: ?*const anyopaque, usage: i32) void {
     getProc(PfnBufferData, "glBufferData")(@intCast(target), size, data, @intCast(usage));
 }
 
+/// Update a subset of a buffer object's data store
 pub fn rlBufferSubData(target: i32, offset: isize, size: isize, data: ?*const anyopaque) void {
     getProc(PfnBufferSubData, "glBufferSubData")(@intCast(target), offset, size, data);
 }
 
+/// Draw multiple sets of primitives from read-only GPU memory with a single call
 pub fn rlMultiDrawArraysIndirect(mode: i32, drawcount: i32) void {
     getProc(PfnMultiDrawArraysIndirect, "glMultiDrawArraysIndirect")(@intCast(mode), null, @intCast(drawcount), 0);
 }
@@ -361,11 +371,6 @@ pub fn rlMapBufferRange(target: i32, offset: isize, length: isize, access: i32) 
 /// Unmap a previously mapped buffer. Returns false if the mapping was invalidated
 pub fn rlUnmapBuffer(target: i32) bool {
     return cdef.glUnmapBuffer(@as(c_int, target)) != 0;
-}
-
-/// Bind a buffer object to a buffer target
-pub fn rlBindBuffer(target: i32, buffer: u32) void {
-    cdef.glBindBuffer(@as(c_int, target), @as(c_uint, buffer));
 }
 
 /// Create a fence sync object that signals when all prior GPU commands complete
