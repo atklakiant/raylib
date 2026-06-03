@@ -303,7 +303,7 @@ pub const rl_default_shader_attrib_location_boneweights = @as(i32, 8);
 pub const rl_default_shader_attrib_location_instancetransform = @as(i32, 9);
 
 const MultiDrawArraysIndirect = struct {
-    var func: ?*const fn (c_int, ?*const anyopaque, c_int, c_int) callconv(.C) void = null;
+    var func: ?*const fn (c_int, ?*const anyopaque, c_int, c_int) callconv(.c) void = null;
 
     fn call(mode: c_int, indirect: ?*const anyopaque, drawcount: c_int, stride: c_int) void {
         if (func == null) func = loadMultiDrawArraysIndirect();
@@ -312,7 +312,7 @@ const MultiDrawArraysIndirect = struct {
     }
 };
 
-fn loadMultiDrawArraysIndirect() *const fn (c_int, ?*const anyopaque, c_int, c_int) callconv(.C) void {
+fn loadMultiDrawArraysIndirect() *const fn (c_int, ?*const anyopaque, c_int, c_int) callconv(.c) void {
     return @ptrCast(cdef.wglGetProcAddress("glMultiDrawArraysIndirect").?);
 }
 
