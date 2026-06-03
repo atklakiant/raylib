@@ -1,6 +1,8 @@
 const raylib = @import("raylib");
 const std = @import("std");
 
+pub const OpenglVersion = raylib.OpenglVersion;
+
 pub fn build(builder: *std.Build) !void {
     const target = builder.standardTargetOptions(.{});
     const optimize = builder.standardOptimizeOption(.{});
