@@ -302,16 +302,30 @@ pub const rl_default_shader_attrib_location_boneindices = @as(i32, 7);
 pub const rl_default_shader_attrib_location_boneweights = @as(i32, 8);
 pub const rl_default_shader_attrib_location_instancetransform = @as(i32, 9);
 
+const MultiDrawArraysIndirect = struct {
+    var func: ?*const fn (c_int, ?*const anyopaque, c_int, c_int) callconv(.C) void = null;
+
+    fn call(mode: c_int, indirect: ?*const anyopaque, drawcount: c_int, stride: c_int) void {
+        if (func == null) func = loadMultiDrawArraysIndirect();
+
+        func.?(mode, indirect, drawcount, stride);
+    }
+};
+
+fn loadMultiDrawArraysIndirect() *const fn (c_int, ?*const anyopaque, c_int, c_int) callconv(.C) void {
+    return @ptrCast(cdef.wglGetProcAddress("glMultiDrawArraysIndirect").?);
+}
+
 pub fn rlGenBuffers(count: i32, buffers: [*]c_uint) void {
-    cdef.glGenBuffers(@as(c_int, count), buffers);
+    cdef.glGenBuffers(@intCast(count), buffers);
 }
 
 pub fn rlDeleteBuffers(count: i32, buffers: [*]const c_uint) void {
-    cdef.glDeleteBuffers(@as(c_int, count), buffers);
+    cdef.glDeleteBuffers(@intCast(count), buffers);
 }
 
 pub fn rlBufferData(target: i32, size: isize, data: ?*const anyopaque, usage: i32) void {
-    cdef.glBufferData(@as(c_int, target), size, data, @as(c_int, usage));
+    cdef.glBufferData(@intCast(target), size, data, @intCast(usage));
 }
 
 pub fn rlBufferSubData(target: i32, offset: isize, size: isize, data: ?*const anyopaque) void {
@@ -320,7 +334,7 @@ pub fn rlBufferSubData(target: i32, offset: isize, size: isize, data: ?*const an
 
 /// Issue a multi-draw indirect call from the currently bound draw_indirect_buffer
 pub fn rlMultiDrawArraysIndirect(mode: i32, drawcount: i32) void {
-    cdef.glMultiDrawArraysIndirect(@intCast(mode), null, @intCast(drawcount), 0);
+    MultiDrawArraysIndirect.call(@intCast(mode), null, @intCast(drawcount), 0);
 }
 
 /// Insert a memory barrier for the given barrier bits
