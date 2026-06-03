@@ -4,7 +4,7 @@
     .version = "6.0.0",
     .minimum_zig_version = "0.16.0",
 
-    .fingerprint = 0xc4cfa8c610114f28,
+    .fingerprint = 0x13035e5c403549d7,
 
     .dependencies = .{
         .raylib = .{
