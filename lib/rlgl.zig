@@ -302,6 +302,22 @@ pub const rl_default_shader_attrib_location_boneindices = @as(i32, 7);
 pub const rl_default_shader_attrib_location_boneweights = @as(i32, 8);
 pub const rl_default_shader_attrib_location_instancetransform = @as(i32, 9);
 
+pub fn rlGenBuffers(count: i32, buffers: [*]c_uint) void {
+    cdef.glGenBuffers(@as(c_int, count), buffers);
+}
+
+pub fn rlDeleteBuffers(count: i32, buffers: [*]const c_uint) void {
+    cdef.glDeleteBuffers(@as(c_int, count), buffers);
+}
+
+pub fn rlBufferData(target: i32, size: isize, data: ?*const anyopaque, usage: i32) void {
+    cdef.glBufferData(@as(c_int, target), size, data, @as(c_int, usage));
+}
+
+pub fn rlBufferSubData(target: i32, offset: isize, size: isize, data: ?*const anyopaque) void {
+    cdef.glBufferSubData(@as(c_int, target), offset, size, data);
+}
+
 /// Issue a multi-draw indirect call from the currently bound draw_indirect_buffer
 pub fn rlMultiDrawArraysIndirect(mode: i32, drawcount: i32) void {
     cdef.glMultiDrawArraysIndirect(@as(c_int, mode), null, @as(c_int, drawcount), 0);

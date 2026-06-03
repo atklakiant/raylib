@@ -1,6 +1,10 @@
 const rl = @import("raylib.zig");
 const rlgl = @import("rlgl.zig");
 
+pub extern "c" fn glGenBuffers(count: c_int, buffers: [*]c_uint) void;
+pub extern "c" fn glDeleteBuffers(count: c_int, buffers: [*]const c_uint) void;
+pub extern "c" fn glBufferData(target: c_int, size: isize, data: ?*const anyopaque, usage: c_int) void;
+pub extern "c" fn glBufferSubData(target: c_int, offset: isize, size: isize, data: ?*const anyopaque) void;
 pub extern "c" fn glMultiDrawArraysIndirect(mode: c_uint, indirect: ?*const anyopaque, drawcount: c_int, stride: c_int) void;
 pub extern "c" fn glMemoryBarrier(barriers: c_uint) void;
 pub extern "c" fn glBufferStorage(target: c_uint, size: isize, data: ?*const anyopaque, flags: c_uint) void;
