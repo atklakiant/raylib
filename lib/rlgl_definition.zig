@@ -1,7 +1,7 @@
 const rl = @import("raylib.zig");
 const rlgl = @import("rlgl.zig");
 
-pub extern "gdi32" fn wglGetProcAddress(name: [*:0]const u8) callconv(.C) ?*anyopaque;
+pub extern "gdi32" fn wglGetProcAddress(name: [*:0]const u8) callconv(.c) ?*anyopaque;
 
 pub extern "c" fn glGenBuffers(count: c_int, buffers: [*]c_uint) void;
 pub extern "c" fn glDeleteBuffers(count: c_int, buffers: [*]const c_uint) void;
