@@ -320,7 +320,7 @@ pub fn rlBufferSubData(target: i32, offset: isize, size: isize, data: ?*const an
 
 /// Issue a multi-draw indirect call from the currently bound draw_indirect_buffer
 pub fn rlMultiDrawArraysIndirect(mode: i32, drawcount: i32) void {
-    cdef.glMultiDrawArraysIndirect(@as(c_int, mode), null, @as(c_int, drawcount), 0);
+    cdef.glMultiDrawArraysIndirect(@as(c_uint, mode), null, @as(c_int, drawcount), 0);
 }
 
 /// Insert a memory barrier for the given barrier bits
