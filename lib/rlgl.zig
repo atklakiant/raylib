@@ -310,7 +310,7 @@ const PfnBufferSubData = *const fn (c_int, isize, isize, ?*const anyopaque) call
 const PfnMultiDrawArraysIndirect = *const fn (c_int, ?*const anyopaque, c_int, c_int) callconv(.c) void;
 
 fn loadProc(comptime name: [*:0]const u8) *anyopaque {
-    return wglGetProcAddress(name) orelse @panic("failed to load " ++ name);
+    return wglGetProcAddress(name) orelse @panic("failed to load " ++ std.mem.span(name));
 }
 
 fn getProc(comptime Pfn: type, comptime name: [*:0]const u8) Pfn {
