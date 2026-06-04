@@ -308,6 +308,10 @@ const PfnBindBuffer = *const fn (c_int, c_uint) callconv(.c) void;
 const PfnBufferData = *const fn (c_int, isize, ?*const anyopaque, c_int) callconv(.c) void;
 const PfnBufferSubData = *const fn (c_int, isize, isize, ?*const anyopaque) callconv(.c) void;
 const PfnMultiDrawArraysIndirect = *const fn (c_int, ?*const anyopaque, c_int, c_int) callconv(.c) void;
+const PfnMemoryBarrier = *const fn (c_uint) callconv(.c) void;
+const PfnBufferStorage = *const fn (c_uint, isize, ?*const anyopaque, c_uint) callconv(.c) void;
+const PfnMapBufferRange = *const fn (c_uint, isize, isize, c_uint) callconv(.c) ?*anyopaque;
+const PfnUnmapBuffer = *const fn (c_uint) callconv(.c) u8;
 
 pub extern "gdi32" fn wglGetProcAddress(name: [*:0]const u8) callconv(.c) ?*anyopaque;
 
@@ -355,22 +359,23 @@ pub fn rlMultiDrawArraysIndirect(mode: i32, drawcount: i32) void {
 
 /// Insert a memory barrier for the given barrier bits
 pub fn rlMemoryBarrier(barriers: i32) void {
-    cdef.glMemoryBarrier(@as(c_uint, @bitCast(barriers)));
+    getProc(PfnMemoryBarrier, "glMemoryBarrier")(@as(c_uint, @bitCast(barriers)));
 }
 
 /// Allocate immutable GPU buffer storage (required for persistent mapping)
 pub fn rlBufferStorage(target: i32, size: isize, data: ?*const anyopaque, flags: i32) void {
-    cdef.glBufferStorage(@intCast(target), size, data, @as(c_uint, @bitCast(flags)));
+    getProc(PfnBufferStorage, "glBufferStorage")(@intCast(target), size, data, @as(c_uint, @bitCast(flags)));
 }
 
 /// Map a range of a buffer object's data store into the client's address space
-pub fn rlMapBufferRange(target: i32, offset: isize, length: isize, access: i32) ?*anyopaque {
-    return cdef.glMapBufferRange(@intCast(target), offset, length, @as(c_uint, @bitCast(access)));
+pub fn rlMapBufferRange(target: i32, offset: isize, length: isize, access: i32
+) ?*anyopaque {
+    return getProc(PfnMapBufferRange, "glMapBufferRange")(@intCast(target), offset, length, @as(c_uint, @bitCast(access)));
 }
 
 /// Unmap a previously mapped buffer. Returns false if the mapping was invalidated
 pub fn rlUnmapBuffer(target: i32) bool {
-    return cdef.glUnmapBuffer(@intCast(target)) != 0;
+    return getProc(PfnUnmapBuffer, "glUnmapBuffer",)(@intCast(target)) != 0;
 }
 
 /// Create a fence sync object that signals when all prior GPU commands complete
