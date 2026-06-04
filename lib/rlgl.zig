@@ -355,7 +355,7 @@ pub fn rlMultiDrawArraysIndirect(mode: i32, drawcount: i32) void {
 
 /// Insert a memory barrier for the given barrier bits
 pub fn rlMemoryBarrier(barriers: i32) void {
-    cdef.glMemoryBarrier(@intCast(@bitCast(barriers)));
+    cdef.glMemoryBarrier(@as(@bitCast(barriers)));
 }
 
 /// Allocate immutable GPU buffer storage (required for persistent mapping)
@@ -375,12 +375,12 @@ pub fn rlUnmapBuffer(target: i32) bool {
 
 /// Create a fence sync object that signals when all prior GPU commands complete
 pub fn rlFenceSync() ?*anyopaque {
-    return cdef.glFenceSync(@intCast(@bitCast(sync_gpu_commands_complete)), 0);
+    return cdef.glFenceSync(@as(c_uint, @bitCast(sync_gpu_commands_complete)), 0);
 }
 
 /// Block until the sync object is signaled or timeout (ns) expires. Returns the result status
 pub fn rlClientWaitSync(sync: ?*anyopaque, timeout_ns: u64) i32 {
-    return @intCast(@bitCast(cdef.glClientWaitSync(sync, 0, timeout_ns)));
+    return @as(i32, @bitCast(cdef.glClientWaitSync(sync, 0, timeout_ns)));
 }
 
 /// Delete a sync object
