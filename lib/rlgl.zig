@@ -355,32 +355,32 @@ pub fn rlMultiDrawArraysIndirect(mode: i32, drawcount: i32) void {
 
 /// Insert a memory barrier for the given barrier bits
 pub fn rlMemoryBarrier(barriers: i32) void {
-    cdef.glMemoryBarrier(@as(c_uint, @bitCast(barriers)));
+    cdef.glMemoryBarrier(@intCast(@bitCast(barriers)));
 }
 
 /// Allocate immutable GPU buffer storage (required for persistent mapping)
 pub fn rlBufferStorage(target: i32, size: isize, data: ?*const anyopaque, flags: i32) void {
-    cdef.glBufferStorage(@as(c_int, target), size, data, @as(c_uint, @bitCast(flags)));
+    cdef.glBufferStorage(@intCast(target), size, data, @as(c_uint, @bitCast(flags)));
 }
 
 /// Map a range of a buffer object's data store into the client's address space
 pub fn rlMapBufferRange(target: i32, offset: isize, length: isize, access: i32) ?*anyopaque {
-    return cdef.glMapBufferRange(@as(c_int, target), offset, length, @as(c_uint, @bitCast(access)));
+    return cdef.glMapBufferRange(@intCast(target), offset, length, @as(c_uint, @bitCast(access)));
 }
 
 /// Unmap a previously mapped buffer. Returns false if the mapping was invalidated
 pub fn rlUnmapBuffer(target: i32) bool {
-    return cdef.glUnmapBuffer(@as(c_int, target)) != 0;
+    return cdef.glUnmapBuffer(@intCast(target)) != 0;
 }
 
 /// Create a fence sync object that signals when all prior GPU commands complete
 pub fn rlFenceSync() ?*anyopaque {
-    return cdef.glFenceSync(@as(c_uint, @bitCast(sync_gpu_commands_complete)), 0);
+    return cdef.glFenceSync(@intCast(@bitCast(sync_gpu_commands_complete)), 0);
 }
 
 /// Block until the sync object is signaled or timeout (ns) expires. Returns the result status
 pub fn rlClientWaitSync(sync: ?*anyopaque, timeout_ns: u64) i32 {
-    return @as(i32, @bitCast(cdef.glClientWaitSync(sync, 0, timeout_ns)));
+    return @intCast(@bitCast(cdef.glClientWaitSync(sync, 0, timeout_ns)));
 }
 
 /// Delete a sync object
