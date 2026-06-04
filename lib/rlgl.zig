@@ -355,7 +355,7 @@ pub fn rlMultiDrawArraysIndirect(mode: i32, drawcount: i32) void {
 
 /// Insert a memory barrier for the given barrier bits
 pub fn rlMemoryBarrier(barriers: i32) void {
-    cdef.glMemoryBarrier(@as(@bitCast(barriers)));
+    cdef.glMemoryBarrier(@as(c_uint, @bitCast(barriers)));
 }
 
 /// Allocate immutable GPU buffer storage (required for persistent mapping)
